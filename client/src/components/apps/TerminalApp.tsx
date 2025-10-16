@@ -45,7 +45,12 @@ export function TerminalApp() {
     pwd: () => ['/home/user'],
     calc: (args: string) => {
       try {
-        const result = eval(args);
+        // Safe math evaluation - only allow numbers and basic operators
+        const sanitized = args.replace(/[^0-9+\-*/(). ]/g, '');
+        if (sanitized !== args) {
+          return ['Error: Invalid characters in expression'];
+        }
+        const result = Function(`'use strict'; return (${sanitized})`)();
         return [result.toString()];
       } catch {
         return ['Error: Invalid expression'];
