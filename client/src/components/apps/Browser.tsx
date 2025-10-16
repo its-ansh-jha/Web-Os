@@ -16,9 +16,9 @@ export function Browser({ data }: { data?: { url?: string } }) {
   const createBookmark = useCreateBookmark();
   const deleteBookmark = useDeleteBookmark();
   
-  const initialUrl = data?.url || 'https://www.replit.com';
+  const initialUrl = data?.url || 'https://www.google.com';
   const [tabs, setTabs] = useState<Tab[]>([
-    { id: '1', url: initialUrl, title: initialUrl.includes('replit') ? 'Replit' : 'New Tab' },
+    { id: '1', url: initialUrl, title: initialUrl.includes('google') ? 'Google' : 'New Tab' },
   ]);
   const [activeTab, setActiveTab] = useState('1');
   const [urlInput, setUrlInput] = useState(initialUrl);
@@ -201,7 +201,7 @@ export function Browser({ data }: { data?: { url?: string } }) {
               src={currentTab?.url}
               className="w-full h-full border-0"
               title="Browser Content"
-              sandbox="allow-scripts allow-same-origin"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation"
             />
           </div>
         )}
