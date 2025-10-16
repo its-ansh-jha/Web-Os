@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { useStore } from '@/store/useStore';
-import { useFiles, useCreateFile, useDeleteFile } from '@/hooks/useData';
+import { useFiles, useCreateFile, useUpdateFile, useDeleteFile } from '@/hooks/useData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import * as Icons from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { apps } from '@/lib/apps';
+import { useOpenLink } from '@/lib/browserUtils';
 
 export function FileManager() {
-  const { currentPath, setCurrentPath } = useStore();
+  const { currentPath, setCurrentPath, openWindow, setContextMenu } = useStore();
+  const openLink = useOpenLink();
   const { data: files = [], isLoading } = useFiles();
   const createFile = useCreateFile();
   const deleteFile = useDeleteFile();
@@ -31,14 +34,14 @@ export function FileManager() {
 
   const handleCreateItem = () => {
     if (!newItemName || !showNewDialog) return;
-    
+
     createFile.mutate({
       name: newItemName,
       type: showNewDialog,
       parentId: currentPath,
       content: showNewDialog === 'file' ? '' : undefined,
     });
-    
+
     setNewItemName('');
     setShowNewDialog(null);
   };
@@ -51,6 +54,47 @@ export function FileManager() {
     if (['mp4', 'avi', 'mkv'].includes(ext || '')) return Icons.Video;
     if (['js', 'ts', 'jsx', 'tsx', 'py'].includes(ext || '')) return Icons.Code;
     return Icons.File;
+  };
+
+  const handleOpen = (file: File) => {
+    if (file.type === 'folder') {
+      setCurrentPath(file.id);
+    } else if (file.type === 'text') {
+      const textEditorApp = apps.find(app => app.id === 'text-editor');
+      if (textEditorApp) {
+        openWindow(textEditorApp, { file });
+      }
+    } else if (file.type === 'html') {
+      // Open HTML files in browser
+      if (file.content) {
+        // If it's a URL, open it directly
+        const urlPattern = /^https?:\/\//i;
+        if (urlPattern.test(file.content.trim())) {
+          openLink(file.content.trim());
+        } else {
+          // Otherwise open in code editor
+          const codeEditorApp = apps.find(app => app.id === 'code-editor');
+          if (codeEditorApp) {
+            openWindow(codeEditorApp, { file });
+          }
+        }
+      }
+    } else if (['js', 'ts', 'jsx', 'tsx', 'py', 'java', 'cpp', 'c', 'css'].includes(file.type)) {
+      const codeEditorApp = apps.find(app => app.id === 'code-editor');
+      if (codeEditorApp) {
+        openWindow(codeEditorApp, { file });
+      }
+    } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(file.type)) {
+      const galleryApp = apps.find(app => app.id === 'photo-gallery');
+      if (galleryApp) {
+        openWindow(galleryApp, { file });
+      }
+    } else if (file.type === 'url' || file.name.endsWith('.url')) {
+      // Handle URL files
+      if (file.content) {
+        openLink(file.content);
+      }
+    }
   };
 
   return (
@@ -159,11 +203,7 @@ export function FileManager() {
                 <div
                   key={file.id}
                   className="flex flex-col items-center gap-2 p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer group"
-                  onDoubleClick={() => {
-                    if (file.type === 'folder') {
-                      setCurrentPath(file.id);
-                    }
-                  }}
+                  onDoubleClick={() => handleOpen(file)}
                   data-testid={`file-${file.name}`}
                 >
                   <IconComponent className="h-12 w-12 text-primary" />
@@ -192,11 +232,7 @@ export function FileManager() {
                 <div
                   key={file.id}
                   className="flex items-center gap-3 p-2 rounded-lg hover-elevate active-elevate-2 cursor-pointer group"
-                  onDoubleClick={() => {
-                    if (file.type === 'folder') {
-                      setCurrentPath(file.id);
-                    }
-                  }}
+                  onDoubleClick={() => handleOpen(file)}
                   data-testid={`file-list-${file.name}`}
                 >
                   <IconComponent className="h-5 w-5 text-primary" />

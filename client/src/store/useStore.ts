@@ -31,6 +31,7 @@ interface Store {
   activeWindowId: string | null;
   nextZIndex: number;
   openWindow: (app: AppDefinition, data?: any) => void;
+  openBrowserWithUrl: (url: string) => void;
   closeWindow: (id: string) => void;
   minimizeWindow: (id: string) => void;
   maximizeWindow: (id: string) => void;
@@ -114,6 +115,44 @@ export const useStore = create<Store>((set, get) => ({
           isMaximized: false,
           zIndex: state.nextZIndex,
           data,
+        },
+      ],
+      activeWindowId: id,
+      nextZIndex: state.nextZIndex + 1,
+    }));
+  },
+
+  openBrowserWithUrl: (url) => {
+    const browserApp = {
+      id: 'browser',
+      name: 'Web Browser',
+      icon: 'Globe',
+      component: 'Browser',
+      defaultWidth: 900,
+      defaultHeight: 650,
+    };
+    
+    const id = `browser-${Date.now()}`;
+    const centerX = window.innerWidth / 2 - browserApp.defaultWidth / 2;
+    const centerY = window.innerHeight / 2 - browserApp.defaultHeight / 2;
+    
+    set((state) => ({
+      windows: [
+        ...state.windows,
+        {
+          id,
+          appId: browserApp.id,
+          title: browserApp.name,
+          icon: browserApp.icon,
+          component: browserApp.component,
+          x: centerX,
+          y: centerY,
+          width: browserApp.defaultWidth,
+          height: browserApp.defaultHeight,
+          isMinimized: false,
+          isMaximized: false,
+          zIndex: state.nextZIndex,
+          data: { url },
         },
       ],
       activeWindowId: id,

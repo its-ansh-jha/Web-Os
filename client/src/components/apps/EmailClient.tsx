@@ -1,9 +1,10 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import * as Icons from 'lucide-react';
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useOpenLink } from '@/lib/browserUtils';
 
 interface Email {
   id: string;
@@ -27,7 +28,7 @@ const mockEmails: Email[] = [
     id: '2',
     from: 'updates@webos.dev',
     subject: 'New Features Available',
-    body: 'Check out the latest updates including improved window management and new apps.',
+    body: 'Check out the latest updates including improved window management and new apps. Visit https://webos.dev for more info.',
     date: new Date(2025, 9, 14),
     read: true,
   },
@@ -37,6 +38,7 @@ export function EmailClient() {
   const [emails] = useState<Email[]>(mockEmails);
   const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
   const [composing, setComposing] = useState(false);
+  const openLink = useOpenLink();
 
   const currentEmail = emails.find((e) => e.id === selectedEmail);
 
@@ -110,8 +112,24 @@ export function EmailClient() {
               </div>
             </div>
             <div className="flex-1 p-4 overflow-auto">
-              <p>{currentEmail.body}</p>
-            </div>
+                <p
+                  className="text-sm whitespace-pre-wrap"
+                  onClick={(e) => {
+                    const target = e.target as HTMLElement;
+                    if (target.tagName === 'A') {
+                      e.preventDefault();
+                      const href = (target as HTMLAnchorElement).href;
+                      if (href) openLink(href);
+                    }
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: currentEmail.body.replace(
+                      /(https?:\/\/[^\s]+)/g,
+                      '<a href="$1" style="color: #3b82f6; text-decoration: underline; cursor: pointer;">$1</a>'
+                    )
+                  }}
+                />
+              </div>
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center text-muted-foreground">

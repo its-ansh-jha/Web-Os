@@ -11,15 +11,17 @@ interface Tab {
   title: string;
 }
 
-export function Browser() {
+export function Browser({ data }: { data?: { url?: string } }) {
   const { data: bookmarks = [], isLoading } = useBookmarks();
   const createBookmark = useCreateBookmark();
   const deleteBookmark = useDeleteBookmark();
+  
+  const initialUrl = data?.url || 'https://www.replit.com';
   const [tabs, setTabs] = useState<Tab[]>([
-    { id: '1', url: 'https://www.replit.com', title: 'Replit' },
+    { id: '1', url: initialUrl, title: initialUrl.includes('replit') ? 'Replit' : 'New Tab' },
   ]);
   const [activeTab, setActiveTab] = useState('1');
-  const [urlInput, setUrlInput] = useState('https://www.replit.com');
+  const [urlInput, setUrlInput] = useState(initialUrl);
 
   const currentTab = tabs.find((t) => t.id === activeTab);
 
