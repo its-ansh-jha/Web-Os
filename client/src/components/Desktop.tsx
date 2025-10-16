@@ -63,9 +63,12 @@ export function Desktop() {
     });
   };
 
-  const handleClick = () => {
-    setContextMenu(null);
-    closeStartMenu();
+  const handleClick = (e: React.MouseEvent) => {
+    // Only close if clicking directly on desktop, not on children
+    if (e.target === e.currentTarget) {
+      closeStartMenu();
+      setContextMenu(null);
+    }
   };
 
   return (

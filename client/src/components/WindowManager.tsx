@@ -131,7 +131,10 @@ export function WindowManager() {
                     size="icon"
                     variant="ghost"
                     className="h-8 w-8"
-                    onClick={() => minimizeWindow(window.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      minimizeWindow(window.id);
+                    }}
                     data-testid={`button-minimize-${window.appId}`}
                   >
                     <Icons.Minus className="h-4 w-4" />
@@ -140,7 +143,10 @@ export function WindowManager() {
                     size="icon"
                     variant="ghost"
                     className="h-8 w-8"
-                    onClick={() => maximizeWindow(window.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      maximizeWindow(window.id);
+                    }}
                     data-testid={`button-maximize-${window.appId}`}
                   >
                     {window.isMaximized ? (
@@ -153,7 +159,10 @@ export function WindowManager() {
                     size="icon"
                     variant="ghost"
                     className="h-8 w-8 hover:bg-destructive/20"
-                    onClick={() => closeWindow(window.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      closeWindow(window.id);
+                    }}
                     data-testid={`button-close-${window.appId}`}
                   >
                     <Icons.X className="h-4 w-4" />

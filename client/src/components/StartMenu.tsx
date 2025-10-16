@@ -26,6 +26,7 @@ export function StartMenu() {
     <div
       className="fixed bottom-16 left-4 w-96 h-[600px] backdrop-blur-xl bg-card/90 rounded-xl border border-white/10 shadow-2xl overflow-hidden z-[10000] flex flex-col"
       onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
       data-testid="start-menu"
     >
       {/* Search */}

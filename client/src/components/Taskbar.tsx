@@ -27,7 +27,10 @@ export function Taskbar() {
           "h-10 w-10",
           isStartMenuOpen && "bg-primary text-primary-foreground"
         )}
-        onClick={toggleStartMenu}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleStartMenu();
+        }}
         data-testid="button-start-menu"
       >
         <Icons.Grid3x3 className="h-5 w-5" />
