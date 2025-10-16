@@ -121,12 +121,12 @@ export function WindowManager() {
               onMouseDown={() => focusWindow(window.id)}
             >
               {/* Title Bar */}
-              <div className="window-handle flex items-center justify-between h-12 px-4 bg-card/40 border-b border-white/10 cursor-move">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between h-12 px-4 bg-card/40 border-b border-white/10">
+                <div className="window-handle flex items-center gap-3 flex-1 cursor-move">
                   {IconComponent && <IconComponent className="w-5 h-5" />}
                   <span className="text-sm font-medium">{window.title}</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1" onMouseDown={(e) => e.stopPropagation()}>
                   <Button
                     size="icon"
                     variant="ghost"
