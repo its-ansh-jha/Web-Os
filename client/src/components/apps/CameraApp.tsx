@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import * as Icons from 'lucide-react';
+import { useCreateFile } from '@/hooks/useData';
+import { useStore } from '@/store/useStore';
 
 export function CameraApp() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -8,6 +10,8 @@ export function CameraApp() {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const createFile = useCreateFile();
+  const { currentPath } = useStore();
 
   const startCamera = async () => {
     try {
@@ -56,6 +60,20 @@ export function CameraApp() {
     a.click();
   };
 
+  const saveToFileManager = () => {
+    if (!capturedImage) return;
+    
+    const fileName = `photo-${Date.now()}.png`;
+    
+    createFile.mutate({
+      name: fileName,
+      type: 'png',
+      parentId: currentPath,
+      content: capturedImage,
+      size: Math.round(capturedImage.length / 1024), // Approximate size in KB
+    });
+  };
+
   return (
     <div className="flex flex-col h-full p-4">
       <div className="flex-1 flex items-center justify-center bg-black/90 rounded-lg overflow-hidden mb-4">
@@ -99,6 +117,10 @@ export function CameraApp() {
 
         {capturedImage && (
           <>
+            <Button onClick={saveToFileManager} data-testid="button-save">
+              <Icons.Save className="h-4 w-4 mr-2" />
+              Save to Files
+            </Button>
             <Button onClick={downloadPhoto} data-testid="button-download">
               <Icons.Download className="h-4 w-4 mr-2" />
               Download

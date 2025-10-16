@@ -46,6 +46,48 @@ export function FileManager() {
     setShowNewDialog(null);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFiles = e.target.files;
+    if (!uploadedFiles) return;
+
+    for (const file of Array.from(uploadedFiles)) {
+      const reader = new FileReader();
+      
+      reader.onload = async (event) => {
+        const content = event.target?.result as string;
+        const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'file';
+        
+        // Determine file type based on extension
+        let fileType = fileExtension;
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(fileExtension)) {
+          fileType = fileExtension;
+        } else if (['js', 'ts', 'jsx', 'tsx', 'py', 'java', 'cpp', 'c', 'css', 'html'].includes(fileExtension)) {
+          fileType = fileExtension;
+        } else if (['txt', 'md'].includes(fileExtension)) {
+          fileType = 'text';
+        }
+
+        createFile.mutate({
+          name: file.name,
+          type: fileType,
+          parentId: currentPath,
+          content: content,
+          size: Math.round(file.size / 1024), // Size in KB
+        });
+      };
+
+      // Read file as data URL for images, text for others
+      if (file.type.startsWith('image/')) {
+        reader.readAsDataURL(file);
+      } else {
+        reader.readAsText(file);
+      }
+    }
+
+    // Reset input
+    e.target.value = '';
+  };
+
   const getFileIcon = (file: typeof files[0]) => {
     if (file.type === 'folder') return Icons.Folder;
     const ext = file.extension?.toLowerCase();
@@ -153,11 +195,27 @@ export function FileManager() {
           size="icon"
           variant="ghost"
           className="h-8 w-8"
+          onClick={() => document.getElementById('file-upload-input')?.click()}
+          data-testid="button-upload-file"
+        >
+          <Icons.Upload className="h-4 w-4" />
+        </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="h-8 w-8"
           onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
           data-testid="button-view-mode"
         >
           {viewMode === 'grid' ? <Icons.List className="h-4 w-4" /> : <Icons.Grid3x3 className="h-4 w-4" />}
         </Button>
+        <input
+          id="file-upload-input"
+          type="file"
+          multiple
+          className="hidden"
+          onChange={handleFileUpload}
+        />
       </div>
 
       {/* New Item Dialog */}
