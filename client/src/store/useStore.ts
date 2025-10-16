@@ -70,8 +70,20 @@ interface Store {
   // System Actions
   systemAction: 'shutdown' | 'restart' | 'lock' | null;
   isLocked: boolean;
+  isShutdownComplete: boolean;
   performSystemAction: (action: 'shutdown' | 'restart' | 'lock') => void;
   unlock: () => void;
+  powerOn: () => void;
+  
+  // Network & Audio
+  wifiDialogOpen: boolean;
+  volumeDialogOpen: boolean;
+  volume: number;
+  isMuted: boolean;
+  setWifiDialogOpen: (open: boolean) => void;
+  setVolumeDialogOpen: (open: boolean) => void;
+  setVolume: (volume: number) => void;
+  toggleMute: () => void;
 }
 
 export const useStore = create<Store>((set, get) => ({
@@ -194,6 +206,7 @@ export const useStore = create<Store>((set, get) => ({
   // System Actions
   systemAction: null,
   isLocked: false,
+  isShutdownComplete: false,
   performSystemAction: (action) => {
     set({ systemAction: action, isStartMenuOpen: false });
     
@@ -203,7 +216,7 @@ export const useStore = create<Store>((set, get) => ({
       }, 800);
     } else if (action === 'shutdown') {
       setTimeout(() => {
-        // Keep showing shutdown screen
+        set({ systemAction: null, isShutdownComplete: true });
       }, 4500);
     } else if (action === 'restart') {
       setTimeout(() => {
@@ -212,6 +225,17 @@ export const useStore = create<Store>((set, get) => ({
     }
   },
   unlock: () => set({ isLocked: false }),
+  powerOn: () => set({ isShutdownComplete: false }),
+  
+  // Network & Audio
+  wifiDialogOpen: false,
+  volumeDialogOpen: false,
+  volume: 70,
+  isMuted: false,
+  setWifiDialogOpen: (open) => set({ wifiDialogOpen: open }),
+  setVolumeDialogOpen: (open) => set({ volumeDialogOpen: open }),
+  setVolume: (volume) => set({ volume, isMuted: volume === 0 }),
+  toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
 }));
 
 // Initialize dark mode

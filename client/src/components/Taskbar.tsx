@@ -15,6 +15,8 @@ export function Taskbar() {
     time,
     theme,
     setTheme,
+    setWifiDialogOpen,
+    setVolumeDialogOpen,
   } = useStore();
 
   return (
@@ -80,10 +82,22 @@ export function Taskbar() {
             <Icons.Moon className="h-4 w-4" />
           )}
         </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8" data-testid="button-volume">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-8 w-8"
+          onClick={() => setVolumeDialogOpen(true)}
+          data-testid="button-volume"
+        >
           <Icons.Volume2 className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8" data-testid="button-wifi">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-8 w-8"
+          onClick={() => setWifiDialogOpen(true)}
+          data-testid="button-wifi"
+        >
           <Icons.Wifi className="h-4 w-4" />
         </Button>
         <div className="px-3 py-1 text-sm" data-testid="system-time">

@@ -6,6 +6,9 @@ import { StartMenu } from './StartMenu';
 import { ContextMenu } from './ContextMenu';
 import { BootScreen } from './BootScreen';
 import { LockScreen } from './LockScreen';
+import { ShutdownScreen } from './ShutdownScreen';
+import { WifiDialog } from './WifiDialog';
+import { VolumeDialog } from './VolumeDialog';
 import { apps } from '@/lib/apps';
 import * as Icons from 'lucide-react';
 
@@ -26,7 +29,9 @@ export function Desktop() {
     updateTime,
     closeStartMenu,
     systemAction,
-    isLocked
+    isLocked,
+    isShutdownComplete,
+    powerOn
   } = useStore();
 
   useEffect(() => {
@@ -97,6 +102,9 @@ export function Desktop() {
       
       {systemAction && <BootScreen action={systemAction} />}
       {isLocked && <LockScreen />}
+      {isShutdownComplete && <ShutdownScreen onPowerOn={powerOn} />}
+      <WifiDialog />
+      <VolumeDialog />
     </div>
   );
 }
