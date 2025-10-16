@@ -66,6 +66,12 @@ interface Store {
   isStartMenuOpen: boolean;
   toggleStartMenu: () => void;
   closeStartMenu: () => void;
+
+  // System Actions
+  systemAction: 'shutdown' | 'restart' | 'lock' | null;
+  isLocked: boolean;
+  performSystemAction: (action: 'shutdown' | 'restart' | 'lock') => void;
+  unlock: () => void;
 }
 
 export const useStore = create<Store>((set, get) => ({
@@ -184,6 +190,28 @@ export const useStore = create<Store>((set, get) => ({
   isStartMenuOpen: false,
   toggleStartMenu: () => set((state) => ({ isStartMenuOpen: !state.isStartMenuOpen })),
   closeStartMenu: () => set({ isStartMenuOpen: false }),
+
+  // System Actions
+  systemAction: null,
+  isLocked: false,
+  performSystemAction: (action) => {
+    set({ systemAction: action, isStartMenuOpen: false });
+    
+    if (action === 'lock') {
+      setTimeout(() => {
+        set({ systemAction: null, isLocked: true });
+      }, 800);
+    } else if (action === 'shutdown') {
+      setTimeout(() => {
+        // Keep showing shutdown screen
+      }, 4500);
+    } else if (action === 'restart') {
+      setTimeout(() => {
+        set({ systemAction: null, windows: [], activeWindowId: null });
+      }, 6000);
+    }
+  },
+  unlock: () => set({ isLocked: false }),
 }));
 
 // Initialize dark mode

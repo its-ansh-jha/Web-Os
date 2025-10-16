@@ -4,6 +4,8 @@ import { Taskbar } from './Taskbar';
 import { WindowManager } from './WindowManager';
 import { StartMenu } from './StartMenu';
 import { ContextMenu } from './ContextMenu';
+import { BootScreen } from './BootScreen';
+import { LockScreen } from './LockScreen';
 import { apps } from '@/lib/apps';
 import * as Icons from 'lucide-react';
 
@@ -22,7 +24,9 @@ export function Desktop() {
     contextMenu, 
     openWindow, 
     updateTime,
-    closeStartMenu 
+    closeStartMenu,
+    systemAction,
+    isLocked
   } = useStore();
 
   useEffect(() => {
@@ -90,6 +94,9 @@ export function Desktop() {
       <Taskbar />
       <StartMenu />
       {contextMenu && <ContextMenu />}
+      
+      {systemAction && <BootScreen action={systemAction} />}
+      {isLocked && <LockScreen />}
     </div>
   );
 }

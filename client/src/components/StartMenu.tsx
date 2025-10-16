@@ -67,15 +67,30 @@ export function StartMenu() {
 
       {/* Power Options */}
       <div className="p-4 border-t border-white/10 flex items-center justify-end gap-2">
-        <Button variant="ghost" size="sm" data-testid="button-lock">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => useStore.getState().performSystemAction('lock')}
+          data-testid="button-lock"
+        >
           <Icons.Lock className="h-4 w-4 mr-2" />
           Lock
         </Button>
-        <Button variant="ghost" size="sm" data-testid="button-restart">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => useStore.getState().performSystemAction('restart')}
+          data-testid="button-restart"
+        >
           <Icons.RotateCw className="h-4 w-4 mr-2" />
           Restart
         </Button>
-        <Button variant="ghost" size="sm" data-testid="button-shutdown">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => useStore.getState().performSystemAction('shutdown')}
+          data-testid="button-shutdown"
+        >
           <Icons.Power className="h-4 w-4 mr-2" />
           Shutdown
         </Button>
